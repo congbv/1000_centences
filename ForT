@@ -1,0 +1,200 @@
+<body>
+    <div class="anki-container">
+        <div id="playBtn">
+            <div id="myAudio">{{Sound}}</div>
+        </div>
+        <div id="example" style="display: none">
+            <div id="word" style="display: none">
+            </div>
+        </div>
+        <div class="word-type">{{type:Word}}</div>
+        <div id="words" style="display: none;">{{Word}}</div>
+		<br>
+    </div>
+
+    <script language="JavaScript">
+        window.onload = function() {
+            var theInput = document.getElementById('typeans');
+            if (theInput && theInput.nodeName == "INPUT") {
+                var newArea = document.createElement('textarea');
+                newArea.value = theInput.value;
+                newArea.style = theInput.style;
+                newArea.onkeypress = theInput.onkeypress
+                newArea.id = theInput.id;
+                theInput.parentNode.replaceChild(newArea, theInput);
+        }
+
+
+            var wordss = document.getElementById('words');
+            var correctSentence =  wordss.innerHTML; 
+            var inputField = document.getElementById('typeans');
+            let currentValue = inputField.value;
+            let nextWord = correctSentence.substring(currentValue.length-1).split(" ")[0];
+            inputField.addEventListener('input', function() {
+                let currentValue = this.value;
+                if (currentValue !== correctSentence.substring(0, currentValue.length)) {
+                    setTimeout(function() {
+                    inputField.value = inputField.value.substring(0, inputField.value.length - 1);
+                    }, 300);    
+
+                let nextWord = correctSentence.substring(currentValue.length-1).split(" ")[0];
+
+                } else if (currentValue === correctSentence) {
+                    alert("Chúc mừng bạn đã gõ đúng hoàn toàn!");
+                    }    
+            })
+            var suggestBtn = document.createElement("button");
+            suggestBtn.innerHTML = "Gợi ý";
+            suggestBtn.style.marginLeft = "10px";
+            document.body.appendChild(suggestBtn);
+            suggestBtn.addEventListener("click", function() {
+                let currentValue = inputField.value;
+                let nextWord = correctSentence.substring(currentValue.length).split(" ")[0];
+                alert(nextWord)
+            });
+
+};
+
+
+        function playSounds() {
+        //    var myAudio = document.getElementById('myAudio');
+            var audios = document.getElementsByTagName('audio');
+            x = 0;
+            sequencePlaySounds(audios, 0);
+        }
+
+        // Play sounds on page loaded
+        document.onload = playSounds();
+
+        // Recursive to play sounds
+        function sequencePlaySounds(sounds, idx) {
+
+            // Finish condition.1
+            if (idx >= sounds.length)
+                return;
+            
+            let next = function () {
+                x = x + 1;
+                if ( x < 20 ) {
+                setTimeout(() => {  sequencePlaySounds(sounds, 0); }, 3000);
+                }
+            };
+
+            sounds[idx].onended = next;
+            
+            sounds[idx].play();
+            //if (sounds[idx].get_attribute('src').includes('http')) {
+           //     sounds[idx].play();
+          //  }
+        }
+
+
+        // Show/hide elements
+        function ShowHide(divId) {
+            if (document.getElementById(divId).style.display === 'none') {
+                document.getElementById(divId).style.display = 'block';
+            } else {
+                document.getElementById(divId).style.display = 'none';
+            }
+        }
+
+        // Replace vowel
+        var str = document.getElementById("dropped-vowel").innerHTML;
+        letters = '';
+        for (var i = 0, len = str.length; i < len; i++) {
+            if (str[i].match(/[AEOUIaeoui]/i)) {
+                letters += '<span class="hint">' + '_' + '</span>';
+            } else {
+                letters += str[i];
+            }
+        }
+        document.getElementById("dropped-vowel").innerHTML = letters;
+
+        // Show/hide play sounds element
+        var playBtn = document.getElementById('playBtn');
+        if (document.getElementById('myAudio').textContent === '') {
+            playBtn.parentNode.removeChild(playBtn);
+        }
+    </script>
+</body>
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Player</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Audio Player</h1>
+    <select id="segmentSelect">
+        <option value="-1">Select a segment</option>
+        <option value="0">Segment 1</option>
+        <option value="1">Segment 2</option>
+        <option value="2">Segment 3</option>
+        <option value="3">Segment 4</option>
+        <option value="4">Segment 5</option>
+        <option value="5">Segment 6</option>
+        <option value="6">Segment 7</option>
+        <option value="7">Segment 8</option>
+        <option value="8">Segment 9</option>
+        <option value="9">Segment 10</option>
+    </select>
+    <button onclick="playSegment()">Play</button>
+    <audio id="audioPlayer" controls></audio>
+    <input type="text" id="textInput" placeholder="Type what you hear">
+    <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+let audio = document.getElementById("audioPlayer");
+let segmentSelect = document.getElementById("segmentSelect");
+let textInput = document.getElementById("textInput");
+
+function playSegment() {
+    let segmentIndex = segmentSelect.value;
+    if (segmentIndex !== "-1") {
+        let segmentStartTime = segmentIndex * 10;
+        audio.currentTime = segmentStartTime;
+        audio.play();
+        textInput.focus();
+    }
+}
+
+textInput.addEventListener("input", function() {
+    let segmentIndex = segmentSelect.value;
+    let segmentContent = "Content of segment " + (parseInt(segmentIndex) + 1); // Replace with actual segment content
+    if (textInput.value === segmentContent) {
+        let nextSegmentIndex = parseInt(segmentIndex) + 1;
+        if (nextSegmentIndex <= 9) {
+            segmentSelect.value = nextSegmentIndex;
+            playSegment();
+        }
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
